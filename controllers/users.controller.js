@@ -89,6 +89,18 @@ const putUsuario = async (req = request, res) => {
     res.json(usuario);
 }
 
+const verUsuario = async (req = request, res) => {
+
+    const { id } = req.params;
+
+    const usuario = await Usuario.findById(id);
+
+    res.json({
+        ok: true,
+        usuario
+    });
+}
+
 const deleteUsuario = async(req, res) => {
     
     const { id } = req.params;
@@ -109,6 +121,7 @@ const patchUsuario = (req, res) => {
 
 module.exports = {
     getUsuario,
+    verUsuario,
     putUsuario,
     patchUsuario,
     postUsuario,

@@ -1,6 +1,9 @@
 const { response, request } = require("express");
+const jwt  = require('jsonwebtoken');
+
 const Usuario = require('../models/user');
 const bcryptjs = require('bcryptjs');
+
 const { generarJWT } = require("../helpers/generar-jwt");
 
 
@@ -14,6 +17,7 @@ const login = async(req = request, res = response) => {
         //verificar que el correo exista
         if ( !usuario ) {
             return res.status(400).json({
+                ok: false,
                 msg: 'El usuario y/o la contraseña es incorrecta - correo'
             });
         }
@@ -21,6 +25,7 @@ const login = async(req = request, res = response) => {
         //Si el usuario está activo 
         if( usuario.estado === false){
             return res.json({
+                ok: false,
                 msg: 'El usuario y/o la contraseña es incorrecta - estado: false'
             });
         }
@@ -29,6 +34,7 @@ const login = async(req = request, res = response) => {
         const validPassword = bcryptjs.compareSync(password, usuario.password);
         if( !validPassword ){
             return res.json({
+                ok: false,
                 msg: 'El usuario y/o la contraseña es incorrecta - password'
             })
         }
@@ -36,6 +42,7 @@ const login = async(req = request, res = response) => {
         const token = await generarJWT( usuario.id )
 
         res.status(200).json({
+            ok: true,
             usuario,
             token
         })
@@ -55,6 +62,43 @@ const login = async(req = request, res = response) => {
 }
 
 
+const validaJWT = async( req, res) => {
+
+    const token = req.header('x-token');
+
+    if( !token ){
+        return res.status(401).json({
+            msg: 'No ha venido ningún token'
+        })
+    }
+
+    try {
+
+        const { uid }  = jwt.verify(token, process.env.SECRETORPRIVATEKEY);
+
+        req.usuario = uid;
+
+        res.json({
+            ok: true,
+            uid,
+            token
+        })
+
+    } catch (error) {
+
+        console.log(error);
+        return res.status(401).json({
+            ok: false,
+            msg: 'Token no válido'
+        })
+    }
+
+
+  
+}
+
+
 module.exports = {
-    login
+    login,
+    validaJWT
 }

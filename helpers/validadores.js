@@ -1,5 +1,4 @@
-const Rol = require('../models/rol');
-const Usuario = require('../models/user');
+const { Categoria, Rol, Producto, Usuario, Cliente, Factura } = require('../models');
 
 
 const validarRol = async(rol = '') => {
@@ -35,11 +34,51 @@ const existeUsuarioPorID = async(id) => {
 
 }
 
+const existeCategoriaPorID = async(id) => {
+    const existeCategoria = await Categoria.findById(id);
+
+    if( !existeCategoria ){
+        throw new Error(`No se ha encontrado la categoría que estas buscando con ID: ${ id }`)
+    }
+
+}
+
+const existeProductoPorID = async(id) => {
+    const existeProducto = await Producto.findById(id);
+
+    if( !existeProducto ){
+        throw new Error(`No se ha encontrado el producto que estas buscando con ID: ${ id }`)
+    }
+
+}
+
+const existeClientePorID = async(id) => {
+    const existeCliente = await Cliente.findById(id);
+
+    if( !existeCliente ){
+        throw new Error(`No se ha encontrado el cliente que estas buscando con ID: ${ id }`)
+    }
+
+}
+
+const existeFacturaPorID = async(id = '') => {
+    const existeFactura = await Factura.findById(id);
+
+    if( !existeFactura ){
+        throw new Error(`No se ha encontrado la factura que estas buscando con ID: ${ id }`)
+    }
+
+}
+
 
 module.exports = {
     validarRol,
     emailExiste,
-    existeUsuarioPorID
+    existeUsuarioPorID,
+    existeCategoriaPorID,
+    existeProductoPorID,
+    existeClientePorID,
+    existeFacturaPorID
 }
 
 

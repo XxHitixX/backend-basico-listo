@@ -50,7 +50,7 @@ const crearProducto = async(req = request, res = response) => {
 
 const obtenerProductos = async(req = request, res = response) => {
     
-    const { desde = 0, limite = 5 }  = req.query;
+    const { desde = 0, limite = 0 }  = req.query;
 
     const [ totalProductos, productos ] = await Promise.all([
         Producto.countDocuments({ estado: true }),

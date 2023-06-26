@@ -35,7 +35,12 @@ const obtenerFacturas = async(req, res = response) => {
         Factura.find({estado : true})
                .populate('cliente', 'nombre')
                .populate('usuario', 'nombre')
-               .populate('items.producto', 'nombre')
+               //.populate('items.producto', 'nombre')
+               //usando el populate de esta manera selecciono lo que quiero mostrar
+               .populate({
+                    path: 'items.producto',
+                    select: '_id nombre costo precio stock'
+                })
                .skip(desde)
                .limit(limite)
     ])
@@ -51,14 +56,21 @@ const obtenerFactura = async(req, res = response) => {
     const { id } = req.params;
 
     const factura = await Factura.findById(id)
-                                .populate('cliente', 'nombre')
+                                //.populate('cliente', 'nombre')
+                                .populate({
+                                    path: 'cliente',
+                                    select: 'nombre cedula telefono correo direccion'
+                                })
                                 .populate('usuario', 'nombre')
-                                .populate('items.producto', 'nombre')
+                                //.populate('items.producto', 'nombre')
+                                .populate({
+                                    path: 'items.producto',
+                                    select: '_id nombre costo precio stock'
+                                })
 
-    res.json({
-        ok: true,
+    res.json(
         factura
-    })
+)
 }
 
 const actualizarFactura = async(req, res = response) => {
